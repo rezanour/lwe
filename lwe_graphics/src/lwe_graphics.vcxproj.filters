@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{0ff80b32-4ad3-4b12-b901-f81e9d18f7de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{fe907993-cd6f-4bdd-b86c-dafbe16a6fa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendering">
+      <UniqueIdentifier>{838b1741-09ae-4578-9eec-46e3ad358d9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphics_systems">
+      <UniqueIdentifier>{c285ef2f-48ce-48d5-bcd3-5e97ddc6a68f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="rendering\renderer.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="lwe_graphics.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics_systems\lwe_vulkan_graphics_system.cpp">
+      <Filter>src\graphics_systems</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\lwe_graphics.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\lwe_renderer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics_systems\lwe_vulkan_graphics_system.h">
+      <Filter>src\graphics_systems</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

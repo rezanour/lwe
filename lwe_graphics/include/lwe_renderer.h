@@ -1,5 +1,8 @@
 #pragma once
 
+#include <lwe_platform.h>
+#pragma warning (push)
+#pragma warning (disable: 4251)
 #include <atomic>
 #include <condition_variable>
 #include <map>
@@ -7,7 +10,7 @@
 #include <thread>
 #include <vector>
 
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
 #include <vulkan.h>
 #endif
 
@@ -22,7 +25,7 @@ public:
 private:
     void ThreadProc();
     bool RenderThreadInit();
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
     bool VulkanInitialize();
     void VulkanShutdown();
 
@@ -41,7 +44,7 @@ private:
     bool                    init_completed_ = false;
     std::atomic_bool        exit_requested_ = ATOMIC_VAR_INIT(false);
 
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
     // Vulkan objects
     VkInstance                       instance_                   = nullptr;
     VkPhysicalDevice                 physical_device_            = nullptr;
@@ -54,3 +57,5 @@ private:
     VkQueue                          sparse_binding_queue_       = nullptr;
 #endif // _WIN32
 };
+
+#pragma warning (pop)

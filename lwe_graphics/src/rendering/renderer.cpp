@@ -1,5 +1,5 @@
-#include <common/logging.h>
-#include <rendering/renderer.h>
+#include <lwe_logging.h>
+#include <lwe_renderer.h>
 
 Renderer::Renderer() {
 }
@@ -29,9 +29,9 @@ void Renderer::ThreadProc() {
     init_cond_var_.notify_all();
 
     if (!init_completed_) {
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
         VulkanShutdown();
-#endif // _WIN32
+#endif // LWE_PLATFORM_WINDOWS
         return;
     }
 
@@ -39,35 +39,35 @@ void Renderer::ThreadProc() {
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
     VulkanShutdown();
-#endif // _WIN32
+#endif // LWE_PLATFORM_WINDOWS
 }
 
 bool Renderer::RenderThreadInit() {
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
     if (!VulkanInitialize()) {
-        LWE_DEBUG("Vulkan Initialization Failed.");
+        LWE_LOG(Debug, "Vulkan Initialization Failed.");
         return false;
     }
-#endif // _WIN32
+#endif // LWE_PLATFORM_WINDOWS
 
     return true;
 }
 
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
 bool Renderer::EnumerateInstanceLayers(std::vector<VkLayerProperties> &out_layers) {
     uint32_t count = 0;
     VkResult result = vkEnumerateInstanceLayerProperties(&count, nullptr);
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to query number of layers (%d)", result);
+        LWE_LOG(Error, "Failed to query number of layers (%d)", result);
         return false;
     }
 
     out_layers.resize(count);
     result = vkEnumerateInstanceLayerProperties(&count, out_layers.data());
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to enumerate layers (%d)", result);
+        LWE_LOG(Error, "Failed to enumerate layers (%d)", result);
         return false;
     }
 
@@ -78,7 +78,7 @@ bool Renderer::EnumerateInstanceExtensions(char const *layer_name, std::vector<V
     uint32_t count = 0;
     VkResult result = vkEnumerateInstanceExtensionProperties(layer_name, &count, nullptr);
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to query number of extensions%s%s (%d)",
+        LWE_LOG(Error, "Failed to query number of extensions%s%s (%d)",
             layer_name ? " for layer " : "",
             layer_name ? layer_name : "",
             result);
@@ -88,7 +88,7 @@ bool Renderer::EnumerateInstanceExtensions(char const *layer_name, std::vector<V
     out_extensions.resize(count);
     result = vkEnumerateInstanceExtensionProperties(layer_name, &count, out_extensions.data());
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to enumerate extensions%s%s (%d)",
+        LWE_LOG(Error, "Failed to enumerate extensions%s%s (%d)",
             layer_name ? " for layer " : "",
             layer_name ? layer_name : "",
             result);
@@ -102,14 +102,14 @@ bool Renderer::EnumeratePhysicalDevices(VkInstance const instance, std::vector<V
     uint32_t count = 0;
     VkResult result = vkEnumeratePhysicalDevices(instance, &count, nullptr);
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to query number of physical devices (%d)", result);
+        LWE_LOG(Error, "Failed to query number of physical devices (%d)", result);
         return false;
     }
 
     out_physical_devices.resize(count);
     result = vkEnumeratePhysicalDevices(instance, &count, out_physical_devices.data());
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to enumerate physical devices (%d)", result);
+        LWE_LOG(Error, "Failed to enumerate physical devices (%d)", result);
         return false;
     }
 
@@ -120,14 +120,14 @@ bool Renderer::EnumerateDeviceLayers(VkPhysicalDevice const physical_device, std
     uint32_t count = 0;
     VkResult result = vkEnumerateDeviceLayerProperties(physical_device, &count, nullptr);
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to query number of device layers (%d)", result);
+        LWE_LOG(Error, "Failed to query number of device layers (%d)", result);
         return false;
     }
 
     out_layers.resize(count);
     result = vkEnumerateDeviceLayerProperties(physical_device, &count, out_layers.data());
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to enumerate device layers (%d)", result);
+        LWE_LOG(Error, "Failed to enumerate device layers (%d)", result);
         return false;
     }
 
@@ -138,7 +138,7 @@ bool Renderer::EnumerateDeviceExtensions(VkPhysicalDevice const physical_device,
     uint32_t count = 0;
     VkResult result = vkEnumerateDeviceExtensionProperties(physical_device, layer_name, &count, nullptr);
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to query number of device extensions%s%s (%d)",
+        LWE_LOG(Error, "Failed to query number of device extensions%s%s (%d)",
             layer_name ? " for layer " : "",
             layer_name ? layer_name : "",
             result);
@@ -148,7 +148,7 @@ bool Renderer::EnumerateDeviceExtensions(VkPhysicalDevice const physical_device,
     out_extensions.resize(count);
     result = vkEnumerateDeviceExtensionProperties(physical_device, layer_name, &count, out_extensions.data());
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to enumerate device extensions%s%s (%d)",
+        LWE_LOG(Error, "Failed to enumerate device extensions%s%s (%d)",
             layer_name ? " for layer " : "",
             layer_name ? layer_name : "",
             result);
@@ -205,7 +205,7 @@ bool Renderer::VulkanInitialize() {
     instance_create_info.ppEnabledLayerNames = validation_layers;
 #endif
 
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
     char const *required_instance_extensions[] = {
         "VK_EXT_debug_report",
         "VK_KHR_surface",
@@ -218,8 +218,8 @@ bool Renderer::VulkanInitialize() {
 
     VkResult result = vkCreateInstance(&instance_create_info, nullptr, &instance_);
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to create VK instance (%d).", result)
-        return false;
+      LWE_LOG(Error, "Failed to create VK instance (%d).", result);
+      return false;
     }
 
     std::vector<VkPhysicalDevice> physical_devices;
@@ -227,24 +227,24 @@ bool Renderer::VulkanInitialize() {
         return false;
     }
 
-    LWE_INFO("Vulkan Initialized");
-    LWE_INFO("---------------------------");
-    LWE_INFO("  Extensions:")
+    LWE_LOG(Info, "Vulkan Initialized");
+    LWE_LOG(Info, "---------------------------");
+    LWE_LOG(Info, "  Extensions:");
     for (auto const &extension : instance_extensions) {
-        LWE_INFO("    %s", extension.extensionName);
+        LWE_LOG(Info, "    %s", extension.extensionName);
     }
 
-    LWE_INFO("");
+    LWE_LOG(Info, "");
 
-    LWE_INFO("  Layers:");
+    LWE_LOG(Info, "  Layers:");
     for (auto const &layer : instance_layers) {
-        LWE_INFO("    %s: %s", layer.layerName, layer.description);
+        LWE_LOG(Info, "    %s: %s", layer.layerName, layer.description);
         for (auto const &extension : instance_layer_extensions[layer.layerName]) {
-            LWE_INFO("      %s", extension.extensionName);
+            LWE_LOG(Info, "      %s", extension.extensionName);
         }
     }
 
-    LWE_INFO("");
+    LWE_LOG(Info, "");
 
     uint64_t const mb_to_bytes = 1024 * 1024;
     uint64_t const minimum_required_memory_bytes = 4096 * mb_to_bytes;
@@ -261,7 +261,7 @@ bool Renderer::VulkanInitialize() {
 
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(physical_device, &properties);
-        LWE_INFO("  Physical Device: %s%s, Local Memory: %lluMB",
+        LWE_LOG(Info, "  Physical Device: %s%s, Local Memory: %lluMB",
             properties.deviceName,
             (VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU == properties.deviceType) ? " (discrete)" : "",
             total_local_memory / mb_to_bytes);
@@ -272,7 +272,7 @@ bool Renderer::VulkanInitialize() {
             physical_device_            = physical_device;
             physical_device_properties_ = properties;
             physical_device_memory_     = memory_properties;
-            LWE_INFO("  Device candidate found %s", properties.deviceName);
+            LWE_LOG(Info, "  Device candidate found %s", properties.deviceName);
             break;
         }
 
@@ -283,16 +283,16 @@ bool Renderer::VulkanInitialize() {
             physical_device_            = physical_device;
             physical_device_properties_ = properties;
             physical_device_memory_     = memory_properties;
-            LWE_INFO("  Device candidate found: %s", properties.deviceName);
+            LWE_LOG(Info, "  Device candidate found: %s", properties.deviceName);
         }
     }
-    LWE_INFO("");
+    LWE_LOG(Info, "");
     if (!physical_device_) {
-        LWE_ERROR("  No suitable device found!");
+        LWE_LOG(Error, "  No suitable device found!");
         return false;
     }
 
-    LWE_INFO("  * Device selected: %s", physical_device_properties_.deviceName);
+    LWE_LOG(Info, "  * Device selected: %s", physical_device_properties_.deviceName);
 
     std::vector<VkLayerProperties> device_layers;
     std::vector<VkExtensionProperties> device_extensions;
@@ -310,23 +310,23 @@ bool Renderer::VulkanInitialize() {
         }
     }
 
-    LWE_INFO("");
-    LWE_INFO("  Device Extensions:")
-        for (auto const &extension : device_extensions) {
-            LWE_INFO("    %s", extension.extensionName);
-        }
+    LWE_LOG(Info, "");
+    LWE_LOG(Info, "  Device Extensions:");
+    for (auto const &extension : device_extensions) {
+        LWE_LOG(Info, "    %s", extension.extensionName);
+    }
 
-    LWE_INFO("");
+    LWE_LOG(Info, "");
 
-    LWE_INFO("  Device Layers:");
+    LWE_LOG(Info, "  Device Layers:");
     for (auto const &layer : device_layers) {
-        LWE_INFO("    %s: %s", layer.layerName, layer.description);
+        LWE_LOG(Info, "    %s: %s", layer.layerName, layer.description);
         for (auto const &extension : device_layer_extensions[layer.layerName]) {
-            LWE_INFO("      %s", extension.extensionName);
+            LWE_LOG(Info, "      %s", extension.extensionName);
         }
     }
 
-    LWE_INFO("---------------------------");
+    LWE_LOG(Info, "---------------------------");
 
     std::vector<VkQueueFamilyProperties> queue_families;
     EnumerateDeviceQueueFamilies(physical_device_, queue_families);
@@ -357,7 +357,7 @@ bool Renderer::VulkanInitialize() {
         }
         queue_type += "|";
 
-        LWE_INFO("Queue: %s (%d)", queue_type.c_str(), family.queueCount);
+        LWE_LOG(Info, "Queue: %s (%d)", queue_type.c_str(), family.queueCount);
     }
 
     VkDeviceCreateInfo device_create_info{};
@@ -368,7 +368,7 @@ bool Renderer::VulkanInitialize() {
     device_create_info.ppEnabledLayerNames = validation_layers;
 #endif
 
-#ifdef _WIN32
+#ifdef LWE_PLATFORM_WINDOWS
     char const *required_device_extensions[] ={
         "VK_KHR_swapchain",
     };
@@ -407,7 +407,7 @@ bool Renderer::VulkanInitialize() {
 
     result = vkCreateDevice(physical_device_, &device_create_info, nullptr, &device_);
     if (VK_SUCCESS != result) {
-        LWE_ERROR("Failed to create vulkan device (%d)", result);
+        LWE_LOG(Error, "Failed to create vulkan device (%d)", result);
         return false;
     }
 
@@ -416,7 +416,7 @@ bool Renderer::VulkanInitialize() {
     vkGetDeviceQueue(device_, queue_family_indices[2], queue_indices[2], &transfer_queue_);
     vkGetDeviceQueue(device_, queue_family_indices[3], queue_indices[3], &sparse_binding_queue_);
     if (!graphics_queue_ || !compute_queue_ || !transfer_queue_ || !sparse_binding_queue_) {
-        LWE_ERROR("Failed to get queue handles.");
+        LWE_LOG(Error, "Failed to get queue handles.");
         return false;
     }
 
@@ -435,4 +435,4 @@ void Renderer::VulkanShutdown() {
     physical_device_      = nullptr;
     instance_             = nullptr;
 }
-#endif // _WIN32
+#endif // LWE_PLATFORM_WINDOWS
