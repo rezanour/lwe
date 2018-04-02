@@ -13,7 +13,9 @@ namespace lwe {
 
 enum class GraphicsAPI {
   Unknown = 0,
+#if LWE_PLATFORM_WINDOWS
   Vulkan,
+#endif // LWE_PLATFORM_WINDOWS
 };
 
 enum class GraphicsDeviceType {

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 #if LWE_PLATFORM_WINDOWS
 #include <Windows.h>
@@ -39,17 +40,17 @@ void LogMessage(LogLevel level, char const *format, ...) {
 
   char message[512]{};
 
-  strcat_s(message, GetLogLevelName(level));
-  strcat_s(message, ": ");
+  strcat(message, GetLogLevelName(level));
+  strcat(message, ": ");
 
   size_t const message_length = strlen(message);
 
   va_list args;
   va_start(args, format);
-  vsprintf_s(message + message_length, sizeof(message) - message_length, format, args);
+  vsprintf(message + message_length, format, args);
   va_end(args);
 
-  strcat_s(message, "\n");
+  strcat(message, "\n");
 
 #if LWE_PLATFORM_WINDOWS
   OutputDebugStringA(message);
