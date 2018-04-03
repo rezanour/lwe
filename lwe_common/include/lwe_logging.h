@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lwe_platform.h>
+#include <stdarg.h>
 
 namespace lwe {
 
@@ -16,6 +17,6 @@ enum class LogLevel {
 void SetLogLevel(LogLevel log_level);
 void LogMessage(LogLevel level, char const *format, ...);
 
-#define LWE_LOG(level, format, ...) LogMessage(lwe::LogLevel::##level, format, __VA_ARGS__)
+#define LWE_LOG(level, format, ...) LogMessage(lwe::LogLevel::level, format, ##__VA_ARGS__)
 
 } // namespace lwe

@@ -54,6 +54,8 @@ void LogMessage(LogLevel level, char const *format, ...) {
 
 #if LWE_PLATFORM_WINDOWS
   OutputDebugStringA(message);
+#elif defined(LWE_PLATFORM_OSX)
+  fprintf(stderr, "%s", message);
 #endif
 
   LWE_ASSERT(LogLevel::Fatal != level);
