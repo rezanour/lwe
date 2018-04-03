@@ -14,7 +14,7 @@
     <Filter Include="src\rendering">
       <UniqueIdentifier>{838b1741-09ae-4578-9eec-46e3ad358d9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\graphics_systems">
+    <Filter Include="src\vulkan">
       <UniqueIdentifier>{c285ef2f-48ce-48d5-bcd3-5e97ddc6a68f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -25,8 +25,8 @@
     <ClCompile Include="lwe_graphics.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="graphics_systems\lwe_vulkan_graphics_system.cpp">
-      <Filter>src\graphics_systems</Filter>
+    <ClCompile Include="vulkan\lwe_vulkan_graphics_system.cpp">
+      <Filter>src\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -36,8 +36,8 @@
     <ClInclude Include="..\include\lwe_renderer.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="graphics_systems\lwe_vulkan_graphics_system.h">
-      <Filter>src\graphics_systems</Filter>
+    <ClInclude Include="vulkan\lwe_vulkan_graphics_system.h">
+      <Filter>src\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

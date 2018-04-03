@@ -22,9 +22,15 @@
     <ClInclude Include="..\include\lwe_assert.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\lwe_system.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lwe_logging.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="lwe_system.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

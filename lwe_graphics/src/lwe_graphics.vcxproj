@@ -55,7 +55,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\include;$(ProjectDir)..\..\lwe_common\include;$(ProjectPath)..\..\..\glm;C:\VulkanSDK\1.0.65.1\Include\vulkan</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -82,7 +82,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\include;$(ProjectDir)..\..\lwe_common\include;$(ProjectPath)..\..\..\glm;C:\VulkanSDK\1.0.65.1\Include\vulkan</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -104,14 +104,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="graphics_systems\lwe_vulkan_graphics_system.cpp" />
+    <ClCompile Include="vulkan\lwe_vulkan_graphics_system.cpp" />
     <ClCompile Include="lwe_graphics.cpp" />
     <ClCompile Include="rendering\renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\lwe_graphics.h" />
     <ClInclude Include="..\include\lwe_renderer.h" />
-    <ClInclude Include="graphics_systems\lwe_vulkan_graphics_system.h" />
+    <ClInclude Include="vulkan\lwe_vulkan_graphics_system.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

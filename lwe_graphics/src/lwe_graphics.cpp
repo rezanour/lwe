@@ -8,8 +8,10 @@
 namespace lwe {
 
 bool GraphicsSystemCreate(GraphicsAPI const graphics_api, std::shared_ptr<IGraphicsSystem> &out_system) {
+  switch (graphics_api) {
+  case GraphicsAPI::Vulkan:
+  {
 #if LWE_PLATFORM_WINDOWS
-  if (GraphicsAPI::Vulkan == graphics_api) {
     std::shared_ptr<VulkanGraphicsSystem> vulkan_system = std::make_shared<VulkanGraphicsSystem>();
     if (!vulkan_system->Initialize()) {
       LWE_LOG(Info, "Vulkan Graphics System failed to initialize.");
@@ -17,11 +19,15 @@ bool GraphicsSystemCreate(GraphicsAPI const graphics_api, std::shared_ptr<IGraph
     }
     out_system = std::dynamic_pointer_cast<IGraphicsSystem>(vulkan_system);
     return true;
+#else
+    LWE_LOG(Error, "Vulkan is not available on this platform.");
+    return false;
+#endif
   }
-#endif // LWE_PLATFORM_WINDOWS
-
-  LWE_LOG(Error, "Invalid or unknown GraphicsAPI parameter.");
-  return false;
+  default:
+    LWE_LOG(Error, "Invalid or unknown GraphicsAPI parameter.");
+    return false;
+  }
 }
 
 } // namespace lwe
