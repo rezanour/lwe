@@ -17,12 +17,12 @@ lwe::LogLevel g_log_level = lwe::LogLevel::Warning;
 
 char const *GetLogLevelName(LogLevel level) {
   switch (level) {
-  case LogLevel::Fatal:   return "FATAL";
-  case LogLevel::Error:   return "ERROR";
-  case LogLevel::Warning: return "WARNING";
-  case LogLevel::Debug:   return "DEBUG";
-  case LogLevel::Info:    return "INFO";
-  case LogLevel::Verbose: return "VERBOSE";
+  case LogLevel::Fatal:   return "FTL";
+  case LogLevel::Error:   return "ERR";
+  case LogLevel::Warning: return "WRN";
+  case LogLevel::Debug:   return "DBG";
+  case LogLevel::Info:    return "INF";
+  case LogLevel::Verbose: return "VRB";
   default: assert(false); return "";
   }
 }
@@ -54,7 +54,7 @@ void LogMessage(LogLevel level, char const *format, ...) {
 
 #if LWE_PLATFORM_WINDOWS
   OutputDebugStringA(message);
-#elif defined(LWE_PLATFORM_OSX)
+#elif LWE_PLATFORM_OSX
   fprintf(stderr, "%s", message);
 #endif
 

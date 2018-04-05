@@ -15,6 +15,8 @@ public:
 
   bool Initialize();
 
+  virtual GraphicsAPI API() const override { return GraphicsAPI::Vulkan; }
+
 private:
   static bool EnumerateDeviceLayers(VkPhysicalDevice const physical_device, std::vector<VkLayerProperties> &out_layers);
   static bool EnumerateDeviceExtensions(VkPhysicalDevice const physical_device, char const *layer_name, std::vector<VkExtensionProperties> &out_extensions);

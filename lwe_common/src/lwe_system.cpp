@@ -6,6 +6,10 @@
 
 #if LWE_PLATFORM_WINDOWS
 #include <Windows.h>
+#elif LWE_PLATFORM_OSX
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <sys/vmmeter.h>
 #endif
 
 namespace lwe {
@@ -73,8 +77,16 @@ bool System::Initialize() {
   initialized_ = true;
 
 #elif LWE_PLATFORM_OSX
-  logical_cpu_count_ = 0;
-  total_system_memory_ = 0;
+  size_t count_len = sizeof(logical_cpu_count_);
+  sysctlbyname("hw.logicalcpu", &logical_cpu_count_, &count_len, nullptr, 0);
+
+  int32_t mib[] = {
+    CTL_HW,
+    HW_MEMSIZE
+  };
+  size_t memory_len = sizeof(total_system_memory_bytes_);
+  sysctl(mib, 2, &total_system_memory_bytes_, &memory_len, nullptr, 0);
+
   vulkan_available_ = false;
   initialized_ = true;
 #endif

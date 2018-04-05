@@ -14,6 +14,7 @@ namespace lwe {
 enum class GraphicsAPI {
   Unknown = 0,
   Vulkan,
+  OpenGL,
 };
 
 enum class GraphicsDeviceType {
@@ -23,7 +24,6 @@ enum class GraphicsDeviceType {
 };
 
 struct GraphicsDeviceDescription {
-  GraphicsAPI        API;
   uint64_t           Handle;
   char               Name[128];
   GraphicsDeviceType Type;
@@ -32,9 +32,13 @@ struct GraphicsDeviceDescription {
 
 struct IGraphicsDevice {
   virtual ~IGraphicsDevice() = default;
+
+  virtual GraphicsAPI API() const = 0;
 };
 
 struct IGraphicsSystem {
+  static bool Create(GraphicsAPI const graphics_api, std::shared_ptr<IGraphicsSystem> &out_system);
+
   virtual ~IGraphicsSystem() = default;
 
   virtual GraphicsAPI API() const = 0;
@@ -43,7 +47,5 @@ struct IGraphicsSystem {
 
   virtual bool CreateDevice(uint32_t device_index, std::shared_ptr<IGraphicsDevice> &out_device) = 0;
 };
-
-bool GraphicsSystemCreate(GraphicsAPI const graphics_api, std::shared_ptr<IGraphicsSystem> &out_system);
 
 } // namespace lwe

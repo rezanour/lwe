@@ -1,13 +1,13 @@
 #include <lwe_logging.h>
 
-#include <graphics_systems/lwe_vulkan_graphics_system.h>
+#include <vulkan/lwe_vulkan_graphics_system.h>
 
 namespace lwe {
 
 VulkanGraphicsDevice::VulkanGraphicsDevice(std::shared_ptr<VulkanGraphicsSystem> const &system, VkPhysicalDevice physical_device)
   : system_(system), physical_device_(physical_device) {
 }
-  
+
 VulkanGraphicsDevice::~VulkanGraphicsDevice() {
   graphics_queue_       = nullptr;
   compute_queue_        = nullptr;

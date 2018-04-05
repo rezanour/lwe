@@ -6,9 +6,9 @@
 #ifdef _WIN32
 #define LWE_PLATFORM_WINDOWS 1
 #elif defined(__APPLE__)
-#define LWE_PLATFORM_OSX
+#define LWE_PLATFORM_OSX 1
 #else
-#error non-Windows platforms not yet supported
+#error OS platform not yet supported
 #endif
 
 #ifdef _NDEBUG

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <lwe_platform.h>
-#pragma warning (push)
-#pragma warning (disable: 4251)
 #include <atomic>
 #include <condition_variable>
 #include <map>
@@ -57,5 +55,3 @@ private:
     VkQueue                          sparse_binding_queue_       = nullptr;
 #endif // _WIN32
 };
-
-#pragma warning (pop)

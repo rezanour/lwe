@@ -17,6 +17,7 @@ enum class LogLevel {
 void SetLogLevel(LogLevel log_level);
 void LogMessage(LogLevel level, char const *format, ...);
 
-#define LWE_LOG(level, format, ...) LogMessage(lwe::LogLevel::level, format, ##__VA_ARGS__)
+#define LWE_LOG(level, format, ...) \
+  LogMessage(lwe::LogLevel::level, "%s: %s (%d)\n     " format, __FUNCTION__, __FILE__, __LINE__, ##__VA_ARGS__);
 
 } // namespace lwe
