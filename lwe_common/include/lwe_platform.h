@@ -1,6 +1,7 @@
 // platform macros and standardization
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef _WIN32

@@ -52,20 +52,20 @@ void idle(void) {
 int main(int argc, char *argv[]) {
 #endif
 
-  lwe::SetLogLevel(lwe::LogLevel::Info);
+  LWESetLogLevel(LWELogLevel_Info);
 
-  if (!lwe::System::Get().Initialize()) {
+  LWESystemInformation system_info = {};
+  if (!LWESystemGetInformation(&system_info)) {
     LWE_LOG(Error, "Failed to initialize system");
     return EXIT_FAILURE;
   }
 
-  LWE_LOG(Info, "Logical Cores: %u", lwe::System::Get().LogicalCPUCount());
-  LWE_LOG(Info, "Total System Memory: %3.2fGB", lwe::System::Get().TotalSystemMemoryBytes() / 1024.0f / 1024.0f / 1024.0f);
-  LWE_LOG(Info, "Available System Memory: %3.2fGB", lwe::System::Get().AvailableSystemMemoryBytes() / 1024.0f / 1024.0f / 1024.0f);
-  LWE_LOG(Info, "Vulkan Available: %s", lwe::System::Get().VulkanAvailable() ? "yes" : "no");
+  LWE_LOG(Info, "Logical Cores: %u", system_info.logical_cpu_count);
+  LWE_LOG(Info, "Total System Memory: %3.2fGB", system_info.total_system_memory_bytes / 1024.0f / 1024.0f / 1024.0f);
+  LWE_LOG(Info, "Vulkan Available: %s", system_info.vulkan_available ? "yes" : "no");
 
   lwe::GraphicsAPI graphics_api = lwe::GraphicsAPI::Unknown;
-  if (lwe::System::Get().VulkanAvailable()) {
+  if (system_info.vulkan_available) {
     LWE_LOG(Info, "Vulkan available, using Vulkan...");
     graphics_api = lwe::GraphicsAPI::Vulkan;
   } else {
@@ -73,23 +73,23 @@ int main(int argc, char *argv[]) {
     graphics_api = lwe::GraphicsAPI::OpenGL;
   }
 
-  std::shared_ptr<lwe::IGraphicsSystem> graphics_system;
-  if (!lwe::IGraphicsSystem::Create(graphics_api, graphics_system)) {
-    LWE_LOG(Fatal, "Could not initialize graphics subsystem.");
-    return EXIT_FAILURE;
-  }
+  //std::shared_ptr<lwe::IGraphicsSystem> graphics_system;
+  //if (!lwe::IGraphicsSystem::Create(graphics_api, graphics_system)) {
+  //  LWE_LOG(Fatal, "Could not initialize graphics subsystem.");
+  //  return EXIT_FAILURE;
+  //}
 
-  std::shared_ptr<lwe::IGraphicsDevice> device;
-  if (!graphics_system->CreateDevice(0, device)) {
-    LWE_LOG(Fatal, "Failed to create graphics device.");
-    return EXIT_FAILURE;
-  }
+  //std::shared_ptr<lwe::IGraphicsDevice> device;
+  //if (!graphics_system->CreateDevice(0, device)) {
+  //  LWE_LOG(Fatal, "Failed to create graphics device.");
+  //  return EXIT_FAILURE;
+  //}
 
-  std::shared_ptr<lwe::IRenderBackend> render_backend;
-  if (!lwe::IRenderBackend::Create(device, render_backend)) {
-    LWE_LOG(Fatal, "Failed to create render backend.");
-    return EXIT_FAILURE;
-  }
+  //std::shared_ptr<lwe::IRenderBackend> render_backend;
+  //if (!lwe::IRenderBackend::Create(device, render_backend)) {
+  //  LWE_LOG(Fatal, "Failed to create render backend.");
+  //  return EXIT_FAILURE;
+  //}
 
 #if 0
   //a basic set up...

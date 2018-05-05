@@ -2,6 +2,7 @@
 
 #include <lwe_graphics.h>
 
+#if LWE_PLATFORM_OSX
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl.h>
 
@@ -29,3 +30,5 @@ private:
 };
 
 } // namespace lwe
+
+#endif

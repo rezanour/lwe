@@ -318,7 +318,7 @@ bool VulkanGraphicsSystem::Initialize() {
     vkGetPhysicalDeviceMemoryProperties(physical_device, &memory_properties);
 
     GraphicsDeviceDescription desc{};
-    desc.API = API();
+    //desc.API = API();
     desc.Handle = reinterpret_cast<uint64_t>(physical_device);
     strcpy(desc.Name, properties.deviceName);
     switch (properties.deviceType) {

@@ -9,31 +9,29 @@
 #include <Windows.h>
 #endif
 
-namespace lwe {
-
 namespace {
 
-lwe::LogLevel g_log_level = lwe::LogLevel::Warning;
+LWELogLevel g_log_level = LWELogLevel_Warning;
 
-char const *GetLogLevelName(LogLevel level) {
+char const *GetLogLevelName(LWELogLevel level) {
   switch (level) {
-  case LogLevel::Fatal:   return "FTL";
-  case LogLevel::Error:   return "ERR";
-  case LogLevel::Warning: return "WRN";
-  case LogLevel::Debug:   return "DBG";
-  case LogLevel::Info:    return "INF";
-  case LogLevel::Verbose: return "VRB";
-  default: assert(false); return "";
+  case LWELogLevel_Fatal:   return "FTL";
+  case LWELogLevel_Error:   return "ERR";
+  case LWELogLevel_Warning: return "WRN";
+  case LWELogLevel_Debug:   return "DBG";
+  case LWELogLevel_Info:    return "INF";
+  case LWELogLevel_Verbose: return "VRB";
+  default: assert(false);   return "";
   }
 }
 
 } // namespace
 
-void SetLogLevel(LogLevel log_level) {
+void LWESetLogLevel(LWELogLevel log_level) {
   g_log_level = log_level;
 }
 
-void LogMessage(LogLevel level, char const *format, ...) {
+void LWELogMessage(LWELogLevel level, char const *format, ...) {
   if (level > g_log_level) {
     return;
   }
@@ -58,7 +56,5 @@ void LogMessage(LogLevel level, char const *format, ...) {
   fprintf(stderr, "%s", message);
 #endif
 
-  LWE_ASSERT(LogLevel::Fatal != level);
+  LWE_ASSERT(LWELogLevel_Fatal != level);
 }
-
-} // namespace lwe

@@ -12,11 +12,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\lwe_assert.h" />
+    <ClInclude Include="..\include\lwe_handle.h" />
     <ClInclude Include="..\include\lwe_logging.h" />
     <ClInclude Include="..\include\lwe_platform.h" />
     <ClInclude Include="..\include\lwe_system.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lwe_handle.cpp" />
     <ClCompile Include="lwe_logging.cpp" />
     <ClCompile Include="lwe_system.cpp" />
   </ItemGroup>

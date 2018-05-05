@@ -1,23 +1,20 @@
 #pragma once
 
 #include <lwe_platform.h>
+
 #include <stdarg.h>
 
-namespace lwe {
+typedef enum LWELogLevel {
+  LWELogLevel_Fatal = 0,
+  LWELogLevel_Error,
+  LWELogLevel_Warning,
+  LWELogLevel_Debug,
+  LWELogLevel_Info,
+  LWELogLevel_Verbose,
+} LWELogLevel;
 
-enum class LogLevel {
-  Fatal = 0,
-  Error,
-  Warning,
-  Debug,
-  Info,
-  Verbose,
-};
-
-void SetLogLevel(LogLevel log_level);
-void LogMessage(LogLevel level, char const *format, ...);
+void LWESetLogLevel(LWELogLevel log_level);
+void LWELogMessage(LWELogLevel level, char const *format, ...);
 
 #define LWE_LOG(level, format, ...) \
-  LogMessage(lwe::LogLevel::level, "%s: %s (%d)\n     " format, __FUNCTION__, __FILE__, __LINE__, ##__VA_ARGS__);
-
-} // namespace lwe
+  LWELogMessage(LWELogLevel_##level, "%s: %s (%d)\n     " format, __FUNCTION__, __FILE__, __LINE__, ##__VA_ARGS__);

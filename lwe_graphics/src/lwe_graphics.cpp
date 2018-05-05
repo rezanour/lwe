@@ -28,6 +28,7 @@ bool IGraphicsSystem::Create(GraphicsAPI const graphics_api, std::shared_ptr<IGr
   }
   case GraphicsAPI::OpenGL:
   {
+#if LWE_PLATFORM_OSX
     std::shared_ptr<GLGraphicsSystem> gl_system = std::make_shared<GLGraphicsSystem>();
     if (!gl_system->Initialize()) {
       LWE_LOG(Error, "GL Graphics System failed to initialize.");
@@ -35,6 +36,7 @@ bool IGraphicsSystem::Create(GraphicsAPI const graphics_api, std::shared_ptr<IGr
     }
     out_system = gl_system;
     return true;
+#endif
   }
   default:
     LWE_LOG(Error, "Invalid or unknown GraphicsAPI parameter.");

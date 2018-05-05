@@ -12,86 +12,70 @@
 #include <sys/vmmeter.h>
 #endif
 
-namespace lwe {
-
 namespace {
-  std::once_flag g_once_flag;
+  std::mutex           g_init_mutex;
+  bool                 g_initialized = false;
+  LWESystemInformation g_information = {};
 }
 
-std::unique_ptr<System> System::s_instance_;
+bool LWESystemGetInformation(LWESystemInformation *out_info) {
+  if (!g_initialized) {
+    std::lock_guard<std::mutex> lock(g_init_mutex);
+    if (!g_initialized) {
+      g_information = {};
 
-System &System::Get() {
-  std::call_once(g_once_flag, []() { s_instance_.reset(new System()); });
-  return *s_instance_.get();
-}
-
-uint64_t System::AvailableSystemMemoryBytes() const {
 #if LWE_PLATFORM_WINDOWS
-  MEMORYSTATUSEX status{};
-  status.dwLength = sizeof(status);
-  GlobalMemoryStatusEx(&status);
-  return status.ullAvailPhys;
+      DWORD buffer_size = 0;
+      GetLogicalProcessorInformation(nullptr, &buffer_size);
+      std::vector<uint8_t> buffer(buffer_size);
+      SYSTEM_LOGICAL_PROCESSOR_INFORMATION *p = reinterpret_cast<SYSTEM_LOGICAL_PROCESSOR_INFORMATION *>(buffer.data());
+      if (!GetLogicalProcessorInformation(p, &buffer_size)) {
+        LWE_LOG(Error, "Failed to get processor information.");
+        return false;
+      }
+
+      uint64_t offset = 0;
+      while (offset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) < buffer_size) {
+        if (RelationProcessorCore == p->Relationship) {
+          g_information.logical_cpu_count += __popcnt(static_cast<uint32_t>(p->ProcessorMask));
+        }
+        offset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+        ++p;
+      }
+
+      MEMORYSTATUSEX status{};
+      status.dwLength = sizeof(status);
+      if (!GlobalMemoryStatusEx(&status)) {
+        LWE_LOG(Error, "Failed to get memory status.");
+        return false;
+      }
+      g_information.total_system_memory_bytes = status.ullTotalPhys;
+
+      HMODULE module = LoadLibraryA("vulkan-1.dll");
+      if (module) {
+        g_information.vulkan_available = true;
+        FreeLibrary(module);
+        module = nullptr;
+      }
+
 #elif LWE_PLATFORM_OSX
-  return 0;
+      size_t count_len = sizeof(g_information.logical_cpu_count);
+      sysctlbyname("hw.logicalcpu", &g_information.logical_cpu_count, &count_len, nullptr, 0);
+
+      int32_t mib[] ={
+        CTL_HW,
+        HW_MEMSIZE
+      };
+      size_t memory_len = sizeof(g_information.total_system_memory_bytes);
+      sysctl(mib, 2, &g_information.total_system_memory_bytes, &memory_len, nullptr, 0);
+
+      g_information.vulkan_available = false;
 #endif
-}
 
-bool System::Initialize() {
-  if (initialized_) {
-    return initialized_;
-  }
-
-  logical_cpu_count_ = 0;
-
-#if LWE_PLATFORM_WINDOWS
-  DWORD buffer_size = 0;
-  GetLogicalProcessorInformation(nullptr, &buffer_size);
-  std::vector<uint8_t> buffer(buffer_size);
-  SYSTEM_LOGICAL_PROCESSOR_INFORMATION *p = reinterpret_cast<SYSTEM_LOGICAL_PROCESSOR_INFORMATION *>(buffer.data());
-  if (!GetLogicalProcessorInformation(p, &buffer_size)) {
-    LWE_LOG(Error, "Failed to get processor information.");
-    return false;
-  }
-
-  uint64_t offset = 0;
-  while (offset + sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION) < buffer_size) {
-    if (RelationProcessorCore == p->Relationship) {
-      logical_cpu_count_ += __popcnt(static_cast<uint32_t>(p->ProcessorMask));
+      g_initialized = true;
     }
-    offset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
-    ++p;
   }
 
-  MEMORYSTATUSEX status{};
-  status.dwLength = sizeof(status);
-  GlobalMemoryStatusEx(&status);
-  total_system_memory_bytes_ = status.ullTotalPhys;
-
-  HMODULE module = LoadLibraryA("vulkan-1.dll");
-  if (module) {
-    vulkan_available_ = true;
-    FreeLibrary(module);
-    module = nullptr;
-  }
-
-  initialized_ = true;
-
-#elif LWE_PLATFORM_OSX
-  size_t count_len = sizeof(logical_cpu_count_);
-  sysctlbyname("hw.logicalcpu", &logical_cpu_count_, &count_len, nullptr, 0);
-
-  int32_t mib[] = {
-    CTL_HW,
-    HW_MEMSIZE
-  };
-  size_t memory_len = sizeof(total_system_memory_bytes_);
-  sysctl(mib, 2, &total_system_memory_bytes_, &memory_len, nullptr, 0);
-
-  vulkan_available_ = false;
-  initialized_ = true;
-#endif
-
-  return initialized_;
+  *out_info = g_information;
+  return true;
 }
-
-} // namespace lwe

@@ -4,6 +4,30 @@
 
 #include <lwe_platform.h>
 
+typedef enum LWEGraphicsAPI {
+  LWEGraphicsAPI_Unknown = 0,
+  LWEGraphicsAPI_Vulkan,
+} LWEGraphicsAPI;
+
+typedef enum LWEGraphicsDeviceType {
+  LWEGraphicsDeviceType_Unknown = 0,
+  LWEGraphicsDeviceType_Discrete,
+  LWEGraphicsDeviceType_Integrated,
+} LWEGraphicsDeviceType;
+
+typedef struct LWEGraphicsDeviceDescription {
+  uint64_t              handle;
+  char                  name[128];
+  LWEGraphicsDeviceType type;
+  uint64_t              local_memory_bytes;
+} LWEGraphicsDeviceDescription;
+
+
+bool LWEGraphicsIsAPIAvailable(LWEGraphicsAPI graphics_api);
+bool LWEGraphicsEnumerateDevices(LWEGraphicsAPI graphics_api, uint32_t *inout_num_devices, LWEGraphicsDeviceDescription *out_devices);
+bool LWEGraphicsCreateDevice(LWEGraphicsDeviceDescription const *desc);
+
+
 #include <map>
 #include <memory>
 #include <string>
